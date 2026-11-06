@@ -1,6 +1,6 @@
 ---
 - name: List updates
-  register: r_searched
+  register: patch_searched
   ansible.windows.win_updates:
     category_names: "{{ patch_categories }}"
     accept_list: "{{ patch_kbs | default(omit) }}"
@@ -19,8 +19,8 @@
     - name: Generate report based on search
       when: skip_install
       vars:
-        update_list: "{{ r_searched.updates | dict2items }}"
-        filtered_list: "{{ r_searched.filtered_updates | dict2items }}"
+        update_list: "{{ patch_searched.updates | dict2items }}"
+        filtered_list: "{{ patch_searched.filtered_updates | dict2items }}"
       ansible.builtin.template:
         src: search_report.html.j2
         dest: "{{ patch_report_dest_dir }}/{{ inventory_hostname }}_patch_report.html"
@@ -28,7 +28,7 @@
 
 - name: Install updates
   when: not skip_install
-  register: r_installed
+  register: patch_installed
   ansible.windows.win_updates:
     category_names: "{{ patch_categories }}"
     accept_list: "{{ patch_kbs | default(omit) }}"
@@ -40,7 +40,8 @@
   when:
     - not skip_install
     - patch_failed_report
-    - r_installed.failed_update_count
+    - patch_installed.failed_update_count
   ansible.builtin.template:
     src: failed_report.txt.j2
     dest: "{{ patch_report_dest_dir }}/{{ inventory_hostname }}_patch_failed_report.txt"
+    mode: "0644"

@@ -1,0 +1,58 @@
+---
+argument_specs:
+  main:
+    short_description: Patch a Windows server and publish reports to a designated host
+    description:
+      - Searches for Windows updates in the configured categories.
+      - Installs those updates when skip_install is false.
+      - Publishes an HTML search report, or a failed-update report, on the raspi host.
+    author:
+      - Zach LeBlanc (@zjleblanc)
+    options:
+      skip_install:
+        type: bool
+        required: true
+        description:
+          - Search and publish a report without installing when true.
+          - Install updates when false.
+      patch_categories:
+        type: list
+        elements: str
+        required: false
+        default:
+          - SecurityUpdates
+          - CriticalUpdates
+          - UpdateRollups
+        description:
+          - Windows update categories passed to ansible.windows.win_updates.
+      patch_kbs:
+        type: list
+        elements: str
+        required: false
+        description:
+          - Knowledge base ids passed as accept_list.
+          - Omitted when unset, so category matching is unchanged.
+      patch_allow_reboot:
+        type: bool
+        required: false
+        default: true
+        description:
+          - Allow the install task to reboot the host.
+      patch_failed_report:
+        type: bool
+        required: false
+        default: true
+        description:
+          - Write a failed-update report when an install reports failures.
+      patch_report_dest_dir:
+        type: str
+        required: false
+        default: "%Temp%"
+        description:
+          - Directory on the raspi host where reports are written.
+      template_run_date:
+        type: str
+        required: false
+        description:
+          - Timestamp rendered into the failed-update report.
+          - The report task fails when this is unset.

@@ -1,9 +1,11 @@
+# yaml-language-server: $schema=none
+---
 namespace: zjleblanc
 name: windows
-version: 1.0.1
+version: 0.0.0-semantic-version
 
 authors:
-- Zach LeBlanc <zjleblanc3@gmail.com>
+  - Zach LeBlanc <zjleblanc3@gmail.com>
 description: Windows automation content
 readme: README.md
 
@@ -15,13 +17,23 @@ tags:
   - smb
   - patching
 
-repository: https://github.com/zjleblanc/zjleblanc.windows
-documentation: https://github.com/zjleblanc/zjleblanc.tmdb/windows/master/README.md
-homepage: https://github.com/zjleblanc/zjleblanc.windows
-issues: https://github.com/zjleblanc/zjleblanc.windows/issues
+repository: https://github.com/autodotes/zjleblanc.windows
+documentation: https://github.com/autodotes/zjleblanc.windows/blob/main/README.md
+homepage: https://github.com/autodotes/zjleblanc.windows
+issues: https://github.com/autodotes/zjleblanc.windows/issues
 
 dependencies: {}
+
 build_ignore:
-  - .venv
+  - .ansible-lint
+  - .cursor
+  - .github
   - .gitignore
+  - .pre-commit-config.yaml
+  - .venv
+  - .yamllint
   - ansible.cfg
+  - collections
+  - docs
+  - pyproject.toml
+  - tests

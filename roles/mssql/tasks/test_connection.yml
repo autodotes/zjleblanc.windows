@@ -1,12 +1,12 @@
 ---
 - name: Set up PowerShell for fetching modules
   tags: prereqs
-  ansible.builtin.win_shell: |
+  ansible.windows.win_shell: |
     Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force
     Install-Module PowerShellGet -AllowClobber -Force
     Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
 
-- name: "Ensure {{ mssql_domain_controller }} has SqlServer module"
+- name: Ensure the SqlServer module is present on {{ mssql_domain_controller }}
   tags:
     - test
     - test_sql
@@ -19,7 +19,7 @@
   tags:
     - test
     - test_sql
-  register: r_test_sql
+  register: mssql_test_sql
   ansible.windows.win_shell: >
     Invoke-SqlCmd -Query "SELECT GETDATE() AS TimeOfQuery"
       -Server "{{ hostvars[inventory_hostname]['ansible_host'] }}"
@@ -31,4 +31,4 @@
     - test
     - test_sql
   ansible.builtin.debug:
-    var: r_test_sql.stdout_lines
+    var: mssql_test_sql.stdout_lines

@@ -1,8 +1,8 @@
 galaxy_info:
   author: Zach LeBlanc
   description: >
-    This role installs PowerShell requirements and adds Windows features required 
-    for SQL Server before completing an installation of a SQL Server instance using 
+    This role installs PowerShell requirements and adds Windows features required
+    for SQL Server before completing an installation of a SQL Server instance using
     desired state configuration.
   company: Red Hat
 
@@ -17,9 +17,9 @@ galaxy_info:
   # - GPL-3.0-only
   # - Apache-2.0
   # - CC-BY-4.0
-  license: license (GPL-2.0-or-later, MIT, etc)
+  license: GPL-3.0-only
 
-  min_ansible_version: "2.1"
+  min_ansible_version: "2.15.0"
 
   # If this a Container Enabled role, provide the minimum Ansible Container version.
   # min_ansible_container_version:

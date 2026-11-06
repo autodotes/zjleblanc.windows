@@ -1,0 +1,11 @@
+---
+galaxy_info:
+  author: Zach LeBlanc
+  description: Patch a Windows server and publish reports to a designated host.
+  license: GPL-3.0-only
+  min_ansible_version: "2.15.0"
+  galaxy_tags:
+    - windows
+    - patching
+
+dependencies: []

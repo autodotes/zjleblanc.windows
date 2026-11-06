@@ -1,10 +1,31 @@
 # zjleblanc.windows
 
-Documentation for the collection.
+Windows automation content.
+
+[Galaxy](https://galaxy.ansible.com/ui/repo/published/zjleblanc/windows/) | [Changelog](CHANGELOG.md)
 
 ## Contents
 
-| Type | FQCN | Description | Docs |
-| --- | --- | --- | --- |
-| Role | zjleblanc.windows.mssql | Install MS SQL Server on Windows using Desired State Configuration | [📝](./roles/mssql/README.md) |
-| Role | zjleblanc.windows.patch | Patch windows server with integrated reporting published to a designated report server | [📝](./roles/patch/README.md) |
+### Roles
+
+| Name | Description |
+| --- | --- |
+| [mssql](roles/mssql/tasks/main.yml) | Install MS SQL Server on Windows using Desired State Configuration |
+| [patch](roles/patch/tasks/main.yml) | Patch a Windows server and publish reports to a designated host |
+
+Working examples are in the [mssql](roles/mssql/README.md) and [patch](roles/patch/README.md) role READMEs.
+
+### Modules
+
+| Name | Description |
+| --- | --- |
+| [smb_info](plugins/modules/smb_info.py) | Gather information regarding server message block shares |
+
+```yaml
+- name: Get info for all server message block shares
+  zjleblanc.windows.smb_info:
+
+- name: Get info for shares starting with Net
+  zjleblanc.windows.smb_info:
+    name: Net*
+```

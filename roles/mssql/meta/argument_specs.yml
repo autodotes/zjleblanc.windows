@@ -1,0 +1,269 @@
+---
+argument_specs:
+  main:
+    short_description: Install MS SQL Server on Windows using Desired State Configuration
+    description:
+      - Installs PowerShell modules and Windows features required by SQL Server.
+      - Creates domain service accounts, then installs and configures an instance with Desired State Configuration.
+      - Adapted from kkolk/mssql.
+    author:
+      - Zach LeBlanc (@zjleblanc)
+    options:
+      mssql_sqlsvc_account_pass:
+        type: str
+        required: true
+        no_log: true
+        description:
+          - Password for the SQL Server service account.
+      mssql_agentsvc_account_pass:
+        type: str
+        required: true
+        no_log: true
+        description:
+          - Password for the SQL Agent service account.
+      mssql_assvc_account_pass:
+        type: str
+        required: true
+        no_log: true
+        description:
+          - Password for the Analysis Services service account.
+      mssql_ps_sqlserver_dsc_version:
+        type: str
+        required: false
+        default: "16.5.0"
+        description:
+          - Version of the SqlServerDsc PowerShell module to install.
+      mssql_version:
+        type: str
+        required: false
+        default: "2022"
+        description:
+          - SQL Server version used in downloader filenames and as the key into mssql_version_media.
+      mssql_version_media:
+        type: dict
+        required: false
+        default:
+          "2022": https://go.microsoft.com/fwlink/p/?linkid=2215158
+          "2019": https://go.microsoft.com/fwlink/?linkid=866664
+        description:
+          - Map of SQL Server version to the media downloader URL.
+      mssql_installation_source:
+        type: str
+        required: false
+        default: "{{ mssql_version_media[mssql_version] }}"
+        description:
+          - URL of the SQL Server media downloader.
+      mssql_installation_path:
+        type: str
+        required: false
+        default: 'C:\SQLInstall'
+        description:
+          - Directory that receives the extracted SQL Server installation media.
+      mssql_temp_download_path:
+        type: str
+        required: false
+        default: 'C:\tmp'
+        description:
+          - Directory that receives the media downloader executable.
+      mssql_instance_name:
+        type: str
+        required: false
+        default: MSSQLSERVER
+        description:
+          - SQL Server instance name.
+      mssql_drive:
+        type: str
+        required: false
+        default: C
+        description:
+          - Drive letter used to build mssql_userdbvol_path.
+      mssql_userdbvol_name:
+        type: str
+        required: false
+        default: Userdbvol01
+        description:
+          - Directory name used to build mssql_userdbvol_path.
+      mssql_port:
+        type: int
+        required: false
+        default: 1433
+        description:
+          - TCP port configured on the instance.
+      mssql_max_server_memory:
+        type: int
+        required: false
+        default: 1024
+        description:
+          - Value applied to max server memory (MB). Must be divisible by 512.
+      mssql_suppress_reboot:
+        type: bool
+        required: false
+        default: false
+        description:
+          - Skip the reboot handler and pass SuppressReboot to SQL setup when true.
+      mssql_base_ldap_path:
+        type: str
+        required: false
+        default: ou=Users,dc=contoso,dc=com
+        description:
+          - LDAP path where the role creates the service accounts.
+      mssql_domain_controller:
+        type: str
+        required: false
+        default: dc01
+        description:
+          - Inventory hostname of the domain controller where service accounts are created.
+      mssql_netbios:
+        type: str
+        required: false
+        default: CONTOSO
+        description:
+          - NetBIOS domain name used to build the default service account names.
+      mssql_sqlsvc_account:
+        type: str
+        required: false
+        default: '{{ mssql_netbios }}\sql_svc'
+        description:
+          - SQL Server service account in DOMAIN\user form.
+      mssql_agentsvc_account:
+        type: str
+        required: false
+        default: '{{ mssql_netbios }}\sql_agt'
+        description:
+          - SQL Agent service account in DOMAIN\user form.
+      mssql_assvc_account:
+        type: str
+        required: false
+        default: "{{ mssql_sqlsvc_account }}"
+        description:
+          - Analysis Services service account in DOMAIN\user form.
+      mssql_userdbvol_path:
+        type: str
+        required: false
+        default: '{{ mssql_drive }}:\{{ mssql_userdbvol_name }}'
+        description:
+          - Volume path that contains database files and logs.
+      mssql_db_accesspath:
+        type: str
+        required: false
+        default: '{{ mssql_userdbvol_path }}\DatabaseFiles'
+        description:
+          - Directory for database files.
+      mssql_logs_accesspath:
+        type: str
+        required: false
+        default: '{{ mssql_userdbvol_path }}\DatabaseLogs'
+        description:
+          - Directory for database logs.
+      mssql_installshared_path:
+        type: str
+        required: false
+        default: 'C:\Program Files\Microsoft SQL Server'
+        description:
+          - SQLSetup InstallSharedDir path.
+      mssql_installsharedwow_path:
+        type: str
+        required: false
+        default: 'C:\Program Files (x86)\Microsoft SQL Server'
+        description:
+          - SQLSetup InstallSharedwowDir path.
+      mssql_instance_path:
+        type: str
+        required: false
+        default: 'C:\Program Files\Microsoft SQL Server\{{ mssql_instance_name }}'
+        description:
+          - SQLSetup InstanceDir path.
+      mssql_sqlinstalldata_path:
+        type: str
+        required: false
+        default: '{{ mssql_db_accesspath }}\{{ mssql_instance_name }}'
+        description:
+          - SQLSetup InstallSQLDataDir path.
+      mssql_sqluserdata_path:
+        type: str
+        required: false
+        default: '{{ mssql_db_accesspath }}\{{ mssql_instance_name }}'
+        description:
+          - SQLSetup SQLUserDBDir path.
+      mssql_sqluserlog_path:
+        type: str
+        required: false
+        default: '{{ mssql_logs_accesspath }}\{{ mssql_instance_name }}'
+        description:
+          - SQLSetup SQLUserDBLogDir path.
+      mssql_sqltempDB_path:
+        type: str
+        required: false
+        default: 'C:\TempDBFiles\Data\{{ mssql_instance_name }}'
+        description:
+          - SQLSetup SQLTempDBDir path.
+      mssql_sqltempDBlog_path:
+        type: str
+        required: false
+        default: 'C:\TempDBFiles\Log\{{ mssql_instance_name }}'
+        description:
+          - SQLSetup SQLTempDBLogDir path.
+      mssql_features:
+        type: str
+        required: false
+        default: SQLENGINE,AS
+        description:
+          - Comma-separated SQL Server features to install.
+      mssql_collation:
+        type: str
+        required: false
+        default: SQL_Latin1_General_CP1_CI_AS
+        description:
+          - SQL Server collation.
+      mssql_browsersvc_mode:
+        type: str
+        required: false
+        default: Automatic
+        choices:
+          - Automatic
+          - Disabled
+          - Manual
+        description:
+          - Startup mode for the SQL Server Browser service.
+      mssql_sysadmin_accounts:
+        type: list
+        elements: str
+        required: false
+        default:
+          - '{{ mssql_netbios }}\Domain Admins'
+          - '{{ mssql_netbios }}\Administrator'
+        description:
+          - Windows accounts granted the sysadmin role.
+      mssql_asadmin_accounts:
+        type: list
+        elements: str
+        required: false
+        default: "{{ mssql_sysadmin_accounts }}"
+        description:
+          - Windows accounts granted Analysis Services administrator rights.
+      mssql_max_degree_of_parallelism:
+        type: int
+        required: false
+        default: 0
+        description:
+          - max degree of parallelism. 0 lets SQL Server choose.
+      mssql_min_server_memory:
+        type: int
+        required: false
+        default: 0
+        description:
+          - Value applied to min server memory (MB).
+  test_connection:
+    short_description: Test SQL connectivity by running SELECT GETDATE()
+    description:
+      - Installs the SqlServer PowerShell module on the target.
+      - Runs SELECT GETDATE() against the target ansible_host and prints the result.
+    author:
+      - Zach LeBlanc (@zjleblanc)
+    options:
+      mssql_domain_controller:
+        type: str
+        required: false
+        default: dc01
+        description:
+          - Domain controller name included in the task names for this entry point.

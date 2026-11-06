@@ -11,30 +11,36 @@ short_description: Gather information regarding server message block shares
 description:
   - Gets list of server message block shares on a Windows hosts
   - Gets access details for each share
+version_added: "1.0.1"
+author:
+  - Zach LeBlanc (@zjleblanc)
 options:
   name:
     description:
       - Optional name filter to isolate specific shares
     type: str
+    required: false
     default: "*"
 seealso:
-- module: ansible.windows.win_share
-author:
-- Zach LeBlanc (@zjleblanc)
+  - module: ansible.windows.win_share
 '''
 
 EXAMPLES = r'''
 - name: Get info for all server message block shares
-  mgmt.windows.smb_info:
+  zjleblanc.windows.smb_info:
 
-- name: Get info for shares staring with Net
-  mgmt.windows.smb_info:
-    name: "Net*"
+- name: Get info for shares starting with Net
+  zjleblanc.windows.smb_info:
+    name: Net*
 '''
 
 RETURN = r'''
 info:
-    description: Object containing entries for each server message block share identified with metadata and access details
-    returned: success
-    type: dict
+  description: Object containing entries for each server message block share identified with metadata and access details
+  returned: success
+  type: dict
+changed:
+  description: Always false. This module only reads share information.
+  returned: always
+  type: bool
 '''

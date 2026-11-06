@@ -1,11 +1,11 @@
 ---
-- name: reboot windows
+- name: Reboot windows
   when: not mssql_suppress_reboot
   ansible.windows.win_reboot:
     reboot_timeout: 7200
     post_reboot_delay: 60
 
-- name: restart sqlagent
+- name: Restart sqlagent
   ansible.windows.win_service:
-    name: "SQLAgent${{ mssql_instance_name|upper }}"
+    name: "SQLAgent${{ mssql_instance_name | upper }}"
     state: restarted

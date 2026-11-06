@@ -4,7 +4,7 @@ ANSIBLE PATCHING REPORT
 
 Created on {{ template_run_date }}
 
-{% for update in r_installed.updates %}
+{% for update in patch_installed.updates %}
     {% if not update.installed %}
 
 TITLE: {{ update.title }}
